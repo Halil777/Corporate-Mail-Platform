@@ -5,6 +5,10 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Search, Plus, ArrowLeft } from "lucide-react"
+import { CreateContactDialog } from "@/components/create-contact-dialog"
+import { useLanguage } from "@/contexts/language-context"
+import { useRouter } from "next/navigation"
 import { Search, Plus } from "lucide-react"
 import { CreateContactDialog } from "@/components/create-contact-dialog"
 
@@ -49,6 +53,8 @@ export function ContactList() {
       company: "Tech Solutions",
     },
   ])
+  const { t } = useLanguage()
+  const router = useRouter()
 
   const filteredContacts = contacts.filter((contact) => {
     const query = searchQuery.toLowerCase()
@@ -67,6 +73,13 @@ export function ContactList() {
   return (
     <div className="flex flex-col h-full">
       <div className="p-4 border-b flex items-center gap-4">
+        <Button variant="ghost" size="icon" onClick={() => router.back()}>
+          <ArrowLeft className="w-4 h-4" />
+        </Button>
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Input
+            placeholder={t("search-contacts")}
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
@@ -78,6 +91,7 @@ export function ContactList() {
         </div>
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
+          {t("add-contact")}
           Add Contact
         </Button>
       </div>
@@ -86,6 +100,10 @@ export function ContactList() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>{t("name")}</TableHead>
+              <TableHead>{t("email")}</TableHead>
+              <TableHead>{t("phone")}</TableHead>
+              <TableHead>{t("company")}</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Phone</TableHead>
@@ -114,6 +132,7 @@ export function ContactList() {
           </TableBody>
         </Table>
         {filteredContacts.length === 0 && (
+          <div className="text-center py-8 text-muted-foreground">{t("no-contacts")}</div>
           <div className="text-center py-8 text-muted-foreground">No contacts found</div>
         )}
       </div>

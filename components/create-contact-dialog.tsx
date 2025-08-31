@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useLanguage } from "@/contexts/language-context"
 
 interface CreateContactDialogProps {
   open: boolean
@@ -28,6 +29,7 @@ export function CreateContactDialog({ open, onOpenChange, onCreate }: CreateCont
     phone: "",
     company: "",
   })
+  const { t } = useLanguage()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -40,6 +42,11 @@ export function CreateContactDialog({ open, onOpenChange, onCreate }: CreateCont
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
+          <DialogTitle>{t("add-contact")}</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">{t("name")}</Label>
           <DialogTitle>Add Contact</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -49,28 +56,37 @@ export function CreateContactDialog({ open, onOpenChange, onCreate }: CreateCont
               id="name"
               value={formData.name}
               onChange={(e) => setFormData((p) => ({ ...p, name: e.target.value }))}
+              placeholder={t("full-name")}
               placeholder="Full name"
               required
             />
           </div>
           <div className="space-y-2">
+            <Label htmlFor="email">{t("email")}</Label>
             <Label htmlFor="email">Email</Label>
             <Input
               id="email"
               type="email"
               value={formData.email}
               onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
+              placeholder={t("email-placeholder")}
               placeholder="name@example.com"
               required
             />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
+              <Label htmlFor="phone">{t("phone")}</Label>
               <Label htmlFor="phone">Phone</Label>
               <Input
                 id="phone"
                 value={formData.phone}
                 onChange={(e) => setFormData((p) => ({ ...p, phone: e.target.value }))}
+                placeholder={t("phone-placeholder")}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="company">{t("company")}</Label>
                 placeholder="(555) 555-5555"
               />
             </div>
@@ -80,12 +96,16 @@ export function CreateContactDialog({ open, onOpenChange, onCreate }: CreateCont
                 id="company"
                 value={formData.company}
                 onChange={(e) => setFormData((p) => ({ ...p, company: e.target.value }))}
+                placeholder={t("company-placeholder")}
                 placeholder="Company name"
               />
             </div>
           </div>
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+              {t("cancel")}
+            </Button>
+            <Button type="submit">{t("save-contact")}</Button>
               Cancel
             </Button>
             <Button type="submit">Save Contact</Button>
