@@ -42,7 +42,7 @@ const navigationItems = [
 const modules = [
   { icon: Calendar, label: "Calendar" },
   { icon: Files, label: "Files", active: true }, // Set Files as active module
-  { icon: CheckSquare, label: "Tasks" },
+  { icon: CheckSquare, label: "Tasks", href: "/tasks" },
   { icon: Users, label: "Contacts" },
   { icon: Search, label: "Search", active: true }, // Added Search module as active
   { icon: Settings, label: "Admin", href: "/admin" }, // Added Admin module for system administration
