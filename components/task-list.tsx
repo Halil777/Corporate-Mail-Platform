@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
@@ -8,9 +8,10 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Calendar, Clock, User, Filter, Search } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { API_URL } from "@/lib/api"
 
 interface Task {
-  id: string
+  id: number
   title: string
   description?: string
   priority: "low" | "medium" | "high" | "urgent"
@@ -26,59 +27,29 @@ export function TaskList() {
   const [searchQuery, setSearchQuery] = useState("")
   const [priorityFilter, setPriorityFilter] = useState<string>("all")
 
-  // Mock tasks data
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: "1",
-      title: "Review Q4 financial reports",
-      description: "Analyze quarterly performance and prepare summary",
-      priority: "high",
-      status: "todo",
-      assignee: "John Smith",
-      dueDate: "2024-01-20",
-      project: "Finance Review",
-      tags: ["finance", "quarterly"],
-    },
-    {
-      id: "2",
-      title: "Update employee handbook",
-      description: "Incorporate new policies and procedures",
-      priority: "medium",
-      status: "in-progress",
-      assignee: "Sarah Johnson",
-      dueDate: "2024-01-25",
-      project: "HR Updates",
-      tags: ["hr", "documentation"],
-    },
-    {
-      id: "3",
-      title: "Setup new development environment",
-      priority: "urgent",
-      status: "todo",
-      assignee: "Mike Chen",
-      dueDate: "2024-01-18",
-      project: "DevOps",
-      tags: ["development", "infrastructure"],
-    },
-    {
-      id: "4",
-      title: "Client presentation slides",
-      description: "Prepare slides for upcoming client meeting",
-      priority: "high",
-      status: "completed",
-      assignee: "Lisa Wang",
-      dueDate: "2024-01-15",
-      project: "Client Relations",
-      tags: ["presentation", "client"],
-    },
-  ])
+  const [tasks, setTasks] = useState<Task[]>([])
 
-  const toggleTaskStatus = (taskId: string) => {
-    setTasks((prev) =>
-      prev.map((task) =>
-        task.id === taskId ? { ...task, status: task.status === "completed" ? "todo" : "completed" } : task,
-      ),
-    )
+  useEffect(() => {
+    fetch(`${API_URL}/tasks`)
+      .then((res) => res.json())
+      .then(setTasks)
+      .catch(console.error)
+  }, [])
+
+  const toggleTaskStatus = async (taskId: number) => {
+    const task = tasks.find((t) => t.id === taskId)
+    if (!task) return
+    const newStatus = task.status === "completed" ? "todo" : "completed"
+    try {
+      await fetch(`${API_URL}/tasks/${taskId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus }),
+      })
+      setTasks((prev) => prev.map((t) => (t.id === taskId ? { ...t, status: newStatus } : t)))
+    } catch (e) {
+      console.error(e)
+    }
   }
 
   const filteredTasks = tasks.filter((task) => {

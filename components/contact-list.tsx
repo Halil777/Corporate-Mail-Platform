@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
@@ -9,8 +9,11 @@ import { Search, Plus, ArrowLeft } from "lucide-react"
 import { CreateContactDialog } from "@/components/create-contact-dialog"
 import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
-import { Search, Plus } from "lucide-react"
-import { CreateContactDialog } from "@/components/create-contact-dialog"
+import { API_URL } from "@/lib/api"
+
+interface Contact {
+  id: number
+
 
 interface Contact {
   id: string
@@ -23,6 +26,17 @@ interface Contact {
 export function ContactList() {
   const [searchQuery, setSearchQuery] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [contacts, setContacts] = useState<Contact[]>([])
+  const { t } = useLanguage()
+  const router = useRouter()
+
+  useEffect(() => {
+    fetch(`${API_URL}/contacts`)
+      .then((res) => res.json())
+      .then(setContacts)
+      .catch(console.error)
+  }, [])
+
   const [contacts, setContacts] = useState<Contact[]>([
     {
       id: "1",
@@ -66,6 +80,18 @@ export function ContactList() {
     )
   })
 
+  const addContact = async (contact: Omit<Contact, "id">) => {
+    try {
+      const res = await fetch(`${API_URL}/contacts`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(contact),
+      })
+      const newContact = await res.json()
+      setContacts((prev) => [...prev, newContact])
+    } catch (e) {
+      console.error(e)
+    }
   const addContact = (contact: Omit<Contact, "id">) => {
     setContacts((prev) => [...prev, { id: Date.now().toString(), ...contact }])
   }

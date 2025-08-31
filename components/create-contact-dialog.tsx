@@ -11,6 +11,11 @@ import { useLanguage } from "@/contexts/language-context"
 interface CreateContactDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
+  onCreate: (contact: Omit<Contact, "id">) => Promise<void>
+}
+
+interface Contact {
+  id: number
   onCreate: (contact: Omit<Contact, "id">) => void
 }
 
@@ -31,6 +36,9 @@ export function CreateContactDialog({ open, onOpenChange, onCreate }: CreateCont
   })
   const { t } = useLanguage()
 
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    await onCreate(formData)
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     onCreate(formData)
