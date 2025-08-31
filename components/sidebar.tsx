@@ -41,12 +41,14 @@ const navigationItems = [
 ]
 
 const modules = [
+
   { icon: Calendar, label: "Calendar", href: "/calendar" },
   { icon: Files, label: "Files", href: "/files" },
   { icon: CheckSquare, label: "Tasks", href: "/tasks" },
   { icon: Users, label: "Contacts", href: "/contacts" },
   { icon: Search, label: "Search", href: "/search" },
   { icon: Settings, label: "Admin", href: "/admin" },
+
 ]
 
 export function Sidebar({ collapsed }: SidebarProps) {
