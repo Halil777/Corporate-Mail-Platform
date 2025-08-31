@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+  i18n: {
+    locales: ["ru", "tr"],
+    defaultLocale: "ru",
+  },
 }
 
 export default nextConfig

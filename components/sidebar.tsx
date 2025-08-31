@@ -23,34 +23,39 @@ import {
   Send,
   User,
   LogOut,
+  Globe,
 } from "lucide-react"
+import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
+import { useLanguage } from "@/contexts/language-context"
 
 interface SidebarProps {
   collapsed: boolean
 }
 
 const navigationItems = [
-  { icon: Mail, label: "Inbox", count: 12, active: false },
-  { icon: Star, label: "Starred", count: 3 },
-  { icon: Send, label: "Sent" },
-  { icon: Archive, label: "Archive" },
-  { icon: Trash2, label: "Trash", count: 2 },
+  { icon: Mail, labelKey: "inbox", count: 12, href: "/inbox" },
+  { icon: Star, labelKey: "starred", count: 3, href: "/starred" },
+  { icon: Send, labelKey: "sent", href: "/sent" },
+  { icon: Archive, labelKey: "archive", href: "/archive" },
+  { icon: Trash2, labelKey: "trash", count: 2, href: "/trash" },
 ]
 
 const modules = [
-  { icon: Calendar, label: "Calendar" },
-  { icon: Files, label: "Files", active: true }, // Set Files as active module
-  { icon: CheckSquare, label: "Tasks" },
-  { icon: Users, label: "Contacts" },
-  { icon: Search, label: "Search", active: true }, // Added Search module as active
-  { icon: Settings, label: "Admin", href: "/admin" }, // Added Admin module for system administration
+  { icon: Calendar, labelKey: "calendar", href: "/calendar" },
+  { icon: Files, labelKey: "files", href: "/files" },
+  { icon: CheckSquare, labelKey: "tasks", href: "/tasks" },
+  { icon: Users, labelKey: "contacts", href: "/contacts" },
+  { icon: Search, labelKey: "search", href: "/search" },
+  { icon: Settings, labelKey: "admin", href: "/admin" },
 ]
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const { user, logout } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
+  const { t, language, setLanguage } = useLanguage()
 
   const handleLogout = () => {
     logout()
@@ -78,7 +83,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
         <div className="p-4">
           <Button variant="outline" className="w-full justify-start text-muted-foreground bg-transparent">
             <Search className="w-4 h-4 mr-2" />
-            Search mail...
+            {t("search-mail")}
           </Button>
         </div>
       )}
@@ -88,50 +93,50 @@ export function Sidebar({ collapsed }: SidebarProps) {
         <div className="p-2">
           {/* Mail Navigation */}
           <div className="space-y-1">
-            {navigationItems.map((item) => (
-              <Button
-                key={item.label}
-                variant={item.active ? "default" : "ghost"}
-                className={cn(
-                  "w-full justify-start",
-                  collapsed ? "px-2" : "px-3",
-                  item.active && "bg-sidebar-primary text-sidebar-primary-foreground",
-                )}
-              >
-                <item.icon className="w-4 h-4" />
-                {!collapsed && (
-                  <>
-                    <span className="ml-3 flex-1 text-left">{item.label}</span>
-                    {item.count && (
-                      <span className="ml-auto text-xs bg-sidebar-accent text-sidebar-accent-foreground px-2 py-1 rounded-full">
-                        {item.count}
-                      </span>
+            {navigationItems.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Button
+                  key={item.labelKey}
+                  asChild
+                  variant={isActive ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start",
+                    collapsed ? "px-2" : "px-3",
+                    isActive && "bg-sidebar-primary text-sidebar-primary-foreground",
+                  )}
+                >
+                  <Link href={item.href} className="flex items-center w-full">
+                    <item.icon className="w-4 h-4" />
+                    {!collapsed && (
+                      <>
+                        <span className="ml-3 flex-1 text-left">{t(item.labelKey)}</span>
+                        {item.count && (
+                          <span className="ml-auto text-xs bg-sidebar-accent text-sidebar-accent-foreground px-2 py-1 rounded-full">
+                            {item.count}
+                          </span>
+                        )}
+                      </>
                     )}
-                  </>
-                )}
-              </Button>
-            ))}
+                  </Link>
+                </Button>
+              )
+            })}
           </div>
 
           {/* Modules */}
           {!collapsed && (
             <div className="mt-6">
               <h3 className="px-3 mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                Modules
+                {t("modules")}
               </h3>
               <div className="space-y-1">
                 {modules.map((item) => (
-                  <Button
-                    key={item.label}
-                    variant={item.active ? "default" : "ghost"}
-                    className={cn(
-                      "w-full justify-start px-3",
-                      item.active && "bg-sidebar-primary text-sidebar-primary-foreground",
-                    )}
-                    onClick={() => item.href && router.push(item.href)}
-                  >
-                    <item.icon className="w-4 h-4" />
-                    <span className="ml-3">{item.label}</span>
+                  <Button key={item.labelKey} variant="ghost" className="w-full justify-start px-3" asChild>
+                    <Link href={item.href} className="flex items-center w-full">
+                      <item.icon className="w-4 h-4" />
+                      <span className="ml-3">{t(item.labelKey)}</span>
+                    </Link>
                   </Button>
                 ))}
               </div>
@@ -163,21 +168,33 @@ export function Sidebar({ collapsed }: SidebarProps) {
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuItem onClick={handleProfile}>
                 <User className="w-4 h-4 mr-2" />
-                Profile Settings
+                {t("profile-settings")}
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={handleLogout}>
                 <LogOut className="w-4 h-4 mr-2" />
-                Sign out
+                {t("sign-out")}
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         )}
-
         <Button variant="ghost" className={cn("w-full justify-start", collapsed ? "px-2" : "px-3")}>
           <Settings className="w-4 h-4" />
-          {!collapsed && <span className="ml-3">Settings</span>}
+          {!collapsed && <span className="ml-3">{t("settings")}</span>}
         </Button>
+
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className={cn("w-full justify-start", collapsed ? "px-2" : "px-3")}> 
+              <Globe className="w-4 h-4" />
+              {!collapsed && <span className="ml-3">{language === "ru" ? "Русский" : "Türkçe"}</span>}
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start">
+            <DropdownMenuItem onClick={() => setLanguage("ru")}>Русский</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => setLanguage("tr")}>Türkçe</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   )
