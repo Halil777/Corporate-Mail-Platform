@@ -49,7 +49,14 @@ const modules = [
   { icon: Users, labelKey: "contacts", href: "/contacts" },
   { icon: Search, labelKey: "search", href: "/search" },
   { icon: Settings, labelKey: "admin", href: "/admin" },
+  { icon: Mail, label: "Inbox", count: 12, href: "/inbox" },
+  { icon: Star, label: "Starred", count: 3, href: "/starred" },
+  { icon: Send, label: "Sent", href: "/sent" },
+  { icon: Archive, label: "Archive", href: "/archive" },
+  { icon: Trash2, label: "Trash", count: 2, href: "/trash" },
 ]
+
+
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const { user, logout } = useAuth()
@@ -98,6 +105,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
               return (
                 <Button
                   key={item.labelKey}
+
                   asChild
                   variant={isActive ? "default" : "ghost"}
                   className={cn(
@@ -111,6 +119,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
                     {!collapsed && (
                       <>
                         <span className="ml-3 flex-1 text-left">{t(item.labelKey)}</span>
+
                         {item.count && (
                           <span className="ml-auto text-xs bg-sidebar-accent text-sidebar-accent-foreground px-2 py-1 rounded-full">
                             {item.count}
@@ -136,6 +145,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
                     <Link href={item.href} className="flex items-center w-full">
                       <item.icon className="w-4 h-4" />
                       <span className="ml-3">{t(item.labelKey)}</span>
+
                     </Link>
                   </Button>
                 ))}
