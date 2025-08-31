@@ -24,33 +24,35 @@ import {
   User,
   LogOut,
 } from "lucide-react"
+import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
-import { useRouter } from "next/navigation"
+import { useRouter, usePathname } from "next/navigation"
 
 interface SidebarProps {
   collapsed: boolean
 }
 
 const navigationItems = [
-  { icon: Mail, label: "Inbox", count: 12, active: false },
-  { icon: Star, label: "Starred", count: 3 },
-  { icon: Send, label: "Sent" },
-  { icon: Archive, label: "Archive" },
-  { icon: Trash2, label: "Trash", count: 2 },
+  { icon: Mail, label: "Inbox", count: 12, href: "/inbox" },
+  { icon: Star, label: "Starred", count: 3, href: "/starred" },
+  { icon: Send, label: "Sent", href: "/sent" },
+  { icon: Archive, label: "Archive", href: "/archive" },
+  { icon: Trash2, label: "Trash", count: 2, href: "/trash" },
 ]
 
 const modules = [
-  { icon: Calendar, label: "Calendar" },
-  { icon: Files, label: "Files", active: true }, // Set Files as active module
-  { icon: CheckSquare, label: "Tasks" },
-  { icon: Users, label: "Contacts" },
-  { icon: Search, label: "Search", active: true }, // Added Search module as active
-  { icon: Settings, label: "Admin", href: "/admin" }, // Added Admin module for system administration
+  { icon: Calendar, label: "Calendar", href: "/calendar" },
+  { icon: Files, label: "Files", href: "/files" },
+  { icon: CheckSquare, label: "Tasks", href: "/tasks" },
+  { icon: Users, label: "Contacts", href: "/contacts" },
+  { icon: Search, label: "Search", href: "/search" },
+  { icon: Settings, label: "Admin", href: "/admin" },
 ]
 
 export function Sidebar({ collapsed }: SidebarProps) {
   const { user, logout } = useAuth()
   const router = useRouter()
+  const pathname = usePathname()
 
   const handleLogout = () => {
     logout()
@@ -88,29 +90,35 @@ export function Sidebar({ collapsed }: SidebarProps) {
         <div className="p-2">
           {/* Mail Navigation */}
           <div className="space-y-1">
-            {navigationItems.map((item) => (
-              <Button
-                key={item.label}
-                variant={item.active ? "default" : "ghost"}
-                className={cn(
-                  "w-full justify-start",
-                  collapsed ? "px-2" : "px-3",
-                  item.active && "bg-sidebar-primary text-sidebar-primary-foreground",
-                )}
-              >
-                <item.icon className="w-4 h-4" />
-                {!collapsed && (
-                  <>
-                    <span className="ml-3 flex-1 text-left">{item.label}</span>
-                    {item.count && (
-                      <span className="ml-auto text-xs bg-sidebar-accent text-sidebar-accent-foreground px-2 py-1 rounded-full">
-                        {item.count}
-                      </span>
+            {navigationItems.map((item) => {
+              const isActive = pathname === item.href
+              return (
+                <Button
+                  key={item.label}
+                  asChild
+                  variant={isActive ? "default" : "ghost"}
+                  className={cn(
+                    "w-full justify-start",
+                    collapsed ? "px-2" : "px-3",
+                    isActive && "bg-sidebar-primary text-sidebar-primary-foreground",
+                  )}
+                >
+                  <Link href={item.href} className="flex items-center w-full">
+                    <item.icon className="w-4 h-4" />
+                    {!collapsed && (
+                      <>
+                        <span className="ml-3 flex-1 text-left">{item.label}</span>
+                        {item.count && (
+                          <span className="ml-auto text-xs bg-sidebar-accent text-sidebar-accent-foreground px-2 py-1 rounded-full">
+                            {item.count}
+                          </span>
+                        )}
+                      </>
                     )}
-                  </>
-                )}
-              </Button>
-            ))}
+                  </Link>
+                </Button>
+              )
+            })}
           </div>
 
           {/* Modules */}
@@ -121,17 +129,11 @@ export function Sidebar({ collapsed }: SidebarProps) {
               </h3>
               <div className="space-y-1">
                 {modules.map((item) => (
-                  <Button
-                    key={item.label}
-                    variant={item.active ? "default" : "ghost"}
-                    className={cn(
-                      "w-full justify-start px-3",
-                      item.active && "bg-sidebar-primary text-sidebar-primary-foreground",
-                    )}
-                    onClick={() => item.href && router.push(item.href)}
-                  >
-                    <item.icon className="w-4 h-4" />
-                    <span className="ml-3">{item.label}</span>
+                  <Button key={item.label} variant="ghost" className="w-full justify-start px-3" asChild>
+                    <Link href={item.href} className="flex items-center w-full">
+                      <item.icon className="w-4 h-4" />
+                      <span className="ml-3">{item.label}</span>
+                    </Link>
                   </Button>
                 ))}
               </div>
