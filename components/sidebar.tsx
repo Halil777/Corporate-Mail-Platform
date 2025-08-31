@@ -24,6 +24,7 @@ import {
   User,
   LogOut,
 } from "lucide-react"
+import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { useRouter } from "next/navigation"
 
@@ -40,12 +41,12 @@ const navigationItems = [
 ]
 
 const modules = [
-  { icon: Calendar, label: "Calendar" },
-  { icon: Files, label: "Files", active: true }, // Set Files as active module
-  { icon: CheckSquare, label: "Tasks" },
-  { icon: Users, label: "Contacts" },
-  { icon: Search, label: "Search", active: true }, // Added Search module as active
-  { icon: Settings, label: "Admin", href: "/admin" }, // Added Admin module for system administration
+  { icon: Calendar, label: "Calendar", href: "/calendar" },
+  { icon: Files, label: "Files", href: "/files" },
+  { icon: CheckSquare, label: "Tasks", href: "/tasks" },
+  { icon: Users, label: "Contacts", href: "/contacts" },
+  { icon: Search, label: "Search", href: "/search" },
+  { icon: Settings, label: "Admin", href: "/admin" },
 ]
 
 export function Sidebar({ collapsed }: SidebarProps) {
@@ -121,17 +122,11 @@ export function Sidebar({ collapsed }: SidebarProps) {
               </h3>
               <div className="space-y-1">
                 {modules.map((item) => (
-                  <Button
-                    key={item.label}
-                    variant={item.active ? "default" : "ghost"}
-                    className={cn(
-                      "w-full justify-start px-3",
-                      item.active && "bg-sidebar-primary text-sidebar-primary-foreground",
-                    )}
-                    onClick={() => item.href && router.push(item.href)}
-                  >
-                    <item.icon className="w-4 h-4" />
-                    <span className="ml-3">{item.label}</span>
+                  <Button key={item.label} variant="ghost" className="w-full justify-start px-3" asChild>
+                    <Link href={item.href} className="flex items-center w-full">
+                      <item.icon className="w-4 h-4" />
+                      <span className="ml-3">{item.label}</span>
+                    </Link>
                   </Button>
                 ))}
               </div>
