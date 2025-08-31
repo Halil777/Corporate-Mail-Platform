@@ -1,10 +1,5 @@
-import { MailLayout } from "@/components/mail-layout"
-import { AuthGuard } from "@/components/auth/auth-guard"
+import { redirect } from "next/navigation"
 
 export default function HomePage() {
-  return (
-    <AuthGuard>
-      <MailLayout />
-    </AuthGuard>
-  )
+  redirect("/inbox")
 }
