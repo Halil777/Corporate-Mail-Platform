@@ -49,6 +49,22 @@ const modules = [
   { icon: Users, labelKey: "contacts", href: "/contacts" },
   { icon: Search, labelKey: "search", href: "/search" },
   { icon: Settings, labelKey: "admin", href: "/admin" },
+  { icon: Mail, label: "Inbox", count: 12, href: "/inbox" },
+  { icon: Star, label: "Starred", count: 3, href: "/starred" },
+  { icon: Send, label: "Sent", href: "/sent" },
+  { icon: Archive, label: "Archive", href: "/archive" },
+  { icon: Trash2, label: "Trash", count: 2, href: "/trash" },
+]
+
+const modules = [
+
+  { icon: Calendar, label: "Calendar", href: "/calendar" },
+  { icon: Files, label: "Files", href: "/files" },
+  { icon: CheckSquare, label: "Tasks", href: "/tasks" },
+  { icon: Users, label: "Contacts", href: "/contacts" },
+  { icon: Search, label: "Search", href: "/search" },
+  { icon: Settings, label: "Admin", href: "/admin" },
+
 ]
 
 export function Sidebar({ collapsed }: SidebarProps) {
@@ -98,6 +114,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
               return (
                 <Button
                   key={item.labelKey}
+                  key={item.label}
                   asChild
                   variant={isActive ? "default" : "ghost"}
                   className={cn(
@@ -111,6 +128,7 @@ export function Sidebar({ collapsed }: SidebarProps) {
                     {!collapsed && (
                       <>
                         <span className="ml-3 flex-1 text-left">{t(item.labelKey)}</span>
+                        <span className="ml-3 flex-1 text-left">{item.label}</span>
                         {item.count && (
                           <span className="ml-auto text-xs bg-sidebar-accent text-sidebar-accent-foreground px-2 py-1 rounded-full">
                             {item.count}
@@ -136,6 +154,10 @@ export function Sidebar({ collapsed }: SidebarProps) {
                     <Link href={item.href} className="flex items-center w-full">
                       <item.icon className="w-4 h-4" />
                       <span className="ml-3">{t(item.labelKey)}</span>
+                  <Button key={item.label} variant="ghost" className="w-full justify-start px-3" asChild>
+                    <Link href={item.href} className="flex items-center w-full">
+                      <item.icon className="w-4 h-4" />
+                      <span className="ml-3">{item.label}</span>
                     </Link>
                   </Button>
                 ))}

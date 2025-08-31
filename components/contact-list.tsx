@@ -9,6 +9,8 @@ import { Search, Plus, ArrowLeft } from "lucide-react"
 import { CreateContactDialog } from "@/components/create-contact-dialog"
 import { useLanguage } from "@/contexts/language-context"
 import { useRouter } from "next/navigation"
+import { Search, Plus } from "lucide-react"
+import { CreateContactDialog } from "@/components/create-contact-dialog"
 
 interface Contact {
   id: string
@@ -78,6 +80,10 @@ export function ContactList() {
           <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <Input
             placeholder={t("search-contacts")}
+        <div className="relative flex-1">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+          <Input
+            placeholder="Search contacts..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="pl-10"
@@ -86,6 +92,7 @@ export function ContactList() {
         <Button onClick={() => setDialogOpen(true)}>
           <Plus className="w-4 h-4 mr-2" />
           {t("add-contact")}
+          Add Contact
         </Button>
       </div>
 
@@ -97,6 +104,10 @@ export function ContactList() {
               <TableHead>{t("email")}</TableHead>
               <TableHead>{t("phone")}</TableHead>
               <TableHead>{t("company")}</TableHead>
+              <TableHead>Name</TableHead>
+              <TableHead>Email</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>Company</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -122,6 +133,7 @@ export function ContactList() {
         </Table>
         {filteredContacts.length === 0 && (
           <div className="text-center py-8 text-muted-foreground">{t("no-contacts")}</div>
+          <div className="text-center py-8 text-muted-foreground">No contacts found</div>
         )}
       </div>
 
